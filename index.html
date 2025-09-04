@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Qualidade - Porcelanato</title>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+        :root {
+            --dark-gray: #424242;
+            --medium-gray: #616161;
+            --light-gray: #9e9e9e;
+            --very-light-gray: #e0e0e0;
+            --background-gray: #f5f5f5;
+            --surface-white: #ffffff;
+            --accent-color: #757575;
+        }
+        
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            background-color: var(--background-gray);
+            color: var(--dark-gray);
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        main {
+            flex: 1 0 auto;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+        
+        .card {
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--medium-gray);
+        }
+        
+        .input-field {
+            margin-top: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .input-field label {
+            color: var(--medium-gray);
+        }
+        
+        .input-field input:focus + label,
+        .input-field textarea:focus + label {
+            color: var(--dark-gray) !important;
+        }
+        
+        .input-field input:focus,
+        .input-field textarea:focus {
+            border-bottom: 1px solid var(--dark-gray) !important;
+            box-shadow: 0 1px 0 0 var(--dark-gray) !important;
+        }
+        
+        .btn, .btn-large {
+            background-color: var(--medium-gray);
+            border-radius: 4px;
+            font-weight: 500;
+            text-transform: none;
+        }
+        
+        .btn:hover, .btn-large:hover {
+            background-color: var(--dark-gray);
+        }
+        
+        .btn.green {
+            background-color: #4caf50;
+        }
+        
+        .btn.blue {
+            background-color: #2196f3;
+        }
+        
+        #reportPreview {
+            padding: 20px;
+            border-radius: 4px;
+            background-color: var(--surface-white);
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--light-gray);
+        }
+        
+        .report-section {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--very-light-gray);
+        }
+        
+        .report-label {
+            font-weight: bold;
+            color: var(--dark-gray);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        
+        .nav-wrapper {
+            background-color: var(--dark-gray);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .fixed-btn-container {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            padding: 0 20px;
+            z-index: 997;
+        }
+        
+        .fixed-btn-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            background-color: var(--surface-white);
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+        }
+        
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .brand-logo i {
+            margin-right: 10px;
+        }
+        
+        .container {
+            position: relative;
+        }
+        
+        .product-item {
+            border: 1px solid var(--very-light-gray);
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: var(--surface-white);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .product-item:hover {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .remove-product {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: var(--light-gray);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .remove-product:hover {
+            color: #f44336;
+        }
+        
+        .products-container {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px dashed var(--light-gray);
+            border-radius: 4px;
+            background-color: var(--surface-white);
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--very-light-gray);
+        }
+        
+        .no-products {
+            text-align: center;
+            padding: 20px;
+            color: var(--light-gray);
+            font-style: italic;
+        }
+        
+        select {
+            display: block;
+        }
+        
+        .dropdown-content li>span {
+            color: var(--dark-gray);
+        }
+        
+        /* Customização da scrollbar */
+        .products-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .products-container::-webkit-scrollbar-track {
+            background: var(--very-light-gray);
+            border-radius: 4px;
+        }
+        
+        .products-container::-webkit-scrollbar-thumb {
+            background: var(--light-gray);
+            border-radius: 4px;
+        }
+        
+        .products-container::-webkit-scrollbar-thumb:hover {
+            background: var(--medium-gray);
+        }
+        
+        /* Estilo para os inputs */
+        input:not([type]), input[type=text], input[type=password], input[type=email], input[type=url], input[type=time], input[type=date], input[type=datetime], input[type=datetime-local], input[type=tel], input[type=number], input[type=search], textarea.materialize-textarea {
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .justificativa-container {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 3px solid var(--light-gray);
+        }
+        
+        .char-counter {
+            font-size: 0.8rem;
+            color: var(--light-gray);
+            text-align: right;
+            margin-top: 5px;
+        }
+        
+        .char-counter.invalid {
+            color: #f44336;
+        }
+        
+        /* Ajustes para mobile */
+        @media (max-width: 600px) {
+            .fixed-btn-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .fixed-btn-wrapper .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .product-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            #productCount {
+                margin-top: 5px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-wrapper">
+                <a href="#" class="brand-logo center">
+                    <i class="material-icons">layers</i>
+                    PorcelanatoPlus
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Formulário de entrada -->
+            <div class="card" id="inputForm">
+                <div class="card-content">
+                    <span class="card-title">Controle de Tonalidade</span>
+                    <p>Preencha os dados do produto para gerar o relatório de avaliação</p>
+                    
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">person</i>
+                            <input id="responsavel" type="text" class="validate">
+                            <label for="responsavel">Responsável pela Avaliação</label>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">inventory_2</i>
+                            <input id="produto" type="text" class="validate">
+                            <label for="produto">Nome do Produto</label>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">aspect_ratio</i>
+                            <input id="formato" type="text" class="validate">
+                            <label for="formato">Formato (ex: 60x60 cm)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">grading</i>
+                            <select id="situacao">
+                                <option value="" disabled selected>Escolha a situação</option>
+                                <option value="Letra">Letra</option>
+                                <option value="Número">Número</option>
+                            </select>
+                            <label>Tipo de Avaliação</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Container da justificativa (inicialmente oculto) -->
+                    <div class="justificativa-container hidden" id="justificativaContainer">
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">feedback</i>
+                                <textarea id="justificativa" class="materialize-textarea validate" data-length="500"></textarea>
+                                <label for="justificativa">Justificativa da Avaliação Numérica (mínimo 10 caracteres)</label>
+                                <div class="char-counter" id="charCounter">0/10 caracteres</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col s12 center">
+                            <button class="btn waves-effect waves-light" id="addProductBtn">
+                                <i class="material-icons left">add</i>
+                                Adicionar Produto
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="product-header">
+                        <h5>Produtos Adicionados</h5>
+                        <span id="productCount">0 produtos</span>
+                    </div>
+                    
+                    <div class="products-container" id="productsContainer">
+                        <div class="no-products" id="noProducts">Nenhum produto adicionado</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col s12 center">
+                            <button class="btn waves-effect waves-light" id="generateBtn">
+                                <i class="material-icons left">description</i>
+                                Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Visualização do relatório -->
+            <div class="card hidden" id="reportCard">
+                <div class="card-content">
+                    <span class="card-title">Relatório de Qualidade</span>
+                    <p>Relatório gerado para o controle de qualidade do produto</p>
+                    
+                    <div id="reportPreview">
+                        <div class="report-section">
+                            <span class="report-label">Responsável:</span>
+                            <span id="previewResponsavel"></span>
+                        </div>
+                        
+                        <div class="report-section">
+                            <span class="report-label">Data e Hora:</span>
+                            <span id="previewData"></span>
+                        </div>
+                        
+                        <div class="report-section">
+                            <span class="report-label">Produtos:</span>
+                            <div id="previewProducts"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Botão fixo para visualizar relatório -->
+    <div class="fixed-btn-container">
+        <div class="fixed-btn-wrapper">
+            <button class="btn waves-effect waves-light hidden" id="viewReportBtn">
+                <i class="material-icons left">visibility</i>
+                Visualizar Relatório
+            </button>
+            
+            <button class="btn waves-effect waves-light green" id="whatsappBtn">
+                <i class="material-icons left">send</i>
+                Enviar por WhatsApp
+            </button>
+            
+            <button class="btn waves-effect waves-light blue" id="newReportBtn">
+                <i class="material-icons left">add</i>
+                Novo Relatório
+            </button>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    
+    <script>
+        $(document).ready(function(){
+            // Inicializar componentes do Materialize
+            $('select').formSelect();
+            $('#justificativa').characterCounter();
+            
+            // Array para armazenar os produtos
+            let products = [];
+            
+            // Mostrar/ocultar campo de justificativa conforme seleção
+            $('#situacao').change(function(){
+                if ($(this).val() === 'Número') {
+                    $('#justificativaContainer').removeClass('hidden');
+                } else {
+                    $('#justificativaContainer').addClass('hidden');
+                    $('#justificativa').val('');
+                    $('#charCounter').removeClass('invalid');
+                }
+            });
+            
+            // Validar tamanho da justificativa em tempo real
+            $('#justificativa').on('input', function(){
+                const length = $(this).val().length;
+                const counter = $('#charCounter');
+                
+                counter.text(`${length}/10 caracteres`);
+                
+                if (length > 0 && length < 10) {
+                    counter.addClass('invalid');
+                } else {
+                    counter.removeClass('invalid');
+                }
+            });
+            
+            // Adicionar produto
+            $('#addProductBtn').click(function(){
+                const produto = $('#produto').val().trim();
+                const formato = $('#formato').val().trim();
+                const situacao = $('#situacao').val();
+                const justificativa = $('#justificativa').val().trim();
+                
+                // Validar campos obrigatórios
+                if(!produto || !formato || !situacao) {
+                    M.toast({html: 'Por favor, preencha todos os campos do produto!', classes: 'red'});
+                    return;
+                }
+                
+                // Validar justificativa se for avaliação numérica
+                if(situacao === 'Número' && justificativa.length < 10) {
+                    M.toast({html: 'A justificativa deve ter pelo menos 10 caracteres!', classes: 'red'});
+                    return;
+                }
+                
+                // Adicionar produto ao array
+                const product = {
+                    nome: produto,
+                    formato: formato,
+                    situacao: situacao,
+                    justificativa: situacao === 'Número' ? justificativa : ''
+                };
+                
+                products.push(product);
+                
+                // Atualizar a lista de produtos
+                updateProductsList();
+                
+                // Limpar campos do produto
+                $('#produto, #formato, #justificativa').val('');
+                $('#situacao').val('');
+                $('select').formSelect();
+                $('#justificativaContainer').addClass('hidden');
+                $('#charCounter').removeClass('invalid').text('0/10 caracteres');
+                
+                M.toast({html: 'Produto adicionado com sucesso!', classes: 'green'});
+            });
+            
+            // Atualizar a lista de produtos na UI
+            function updateProductsList() {
+                const container = $('#productsContainer');
+                const noProducts = $('#noProducts');
+                const productCount = $('#productCount');
+                
+                productCount.text(products.length + ' produto(s)');
+                
+                if (products.length === 0) {
+                    noProducts.removeClass('hidden');
+                    container.html('<div class="no-products" id="noProducts">Nenhum produto adicionado</div>');
+                    return;
+                }
+                
+                noProducts.addClass('hidden');
+                let html = '';
+                
+                products.forEach((product, index) => {
+                    html += `
+                        <div class="product-item">
+                            <i class="material-icons remove-product" data-index="${index}">delete</i>
+                            <div><strong>${product.nome}</strong></div>
+                            <div>Formato: ${product.formato}</div>
+                            <div>Situação: ${product.situacao}</div>
+                            ${product.situacao === 'Número' ? `<div>Justificativa: ${product.justificativa}</div>` : ''}
+                        </div>
+                    `;
+                });
+                
+                container.html(html);
+                
+                // Adicionar evento de remoção
+                $('.remove-product').click(function() {
+                    const index = $(this).data('index');
+                    products.splice(index, 1);
+                    updateProductsList();
+                    M.toast({html: 'Produto removido!', classes: 'green'});
+                });
+            }
+            
+            // Gerar relatório
+            $('#generateBtn').click(function(){
+                const responsavel = $('#responsavel').val().trim();
+                
+                // Validar campos
+                if(!responsavel) {
+                    M.toast({html: 'Por favor, informe o responsável!', classes: 'red'});
+                    return;
+                }
+                
+                if(products.length === 0) {
+                    M.toast({html: 'Por favor, adicione pelo menos um produto!', classes: 'red'});
+                    return;
+                }
+                
+                // Atualizar preview
+                $('#previewResponsavel').text(responsavel);
+                
+                // Data e hora atual
+                const agora = new Date();
+                const dataHora = agora.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                $('#previewData').text(dataHora);
+                
+                // Adicionar produtos ao preview
+                let productsHtml = '';
+                products.forEach((product, index) => {
+                    productsHtml += `
+                        <div class="product-item">
+                            <div><strong>Produto ${index + 1}:</strong> ${product.nome}</div>
+                            <div>Formato: ${product.formato}</div>
+                            <div>Situação: ${product.situacao}</div>
+                            ${product.situacao === 'Número' ? `<div>Justificativa: ${product.justificativa}</div>` : ''}
+                        </div>
+                    `;
+                });
+                
+                $('#previewProducts').html(productsHtml);
+                
+                // Mostrar relatório e botão de visualização
+                $('#reportCard').removeClass('hidden');
+                $('#viewReportBtn').removeClass('hidden');
+                
+                // Scroll para o relatório
+                $('html, body').animate({
+                    scrollTop: $('#reportCard').offset().top
+                }, 500);
+            });
+            
+            // Novo relatório
+            $('#newReportBtn').click(function(){
+                // Limpar formulário
+                $('#responsavel, #produto, #formato, #justificativa').val('');
+                $('#situacao').val('');
+                $('select').formSelect();
+                $('#justificativaContainer').addClass('hidden');
+                $('#charCounter').removeClass('invalid').text('0/10 caracteres');
+                
+                // Limpar produtos
+                products = [];
+                updateProductsList();
+                
+                // Ocultar relatório
+                $('#reportCard').addClass('hidden');
+                $('#viewReportBtn').addClass('hidden');
+                
+                // Scroll para o topo
+                window.scrollTo(0, 0);
+            });
+            
+            // Visualizar relatório
+            $('#viewReportBtn').click(function(){
+                if(!$('#reportCard').hasClass('hidden')) {
+                    $('html, body').animate({
+                        scrollTop: $('#reportCard').offset().top
+                    }, 500);
+                }
+            });
+            
+            // Enviar por WhatsApp
+            $('#whatsappBtn').click(function(){
+                // Verificar se o relatório foi gerado
+                if($('#reportCard').hasClass('hidden')) {
+                    M.toast({html: 'Gere um relatório primeiro!', classes: 'red'});
+                    return;
+                }
+                
+                const responsavel = $('#previewResponsavel').text();
+                const data = $('#previewData').text();
+                
+                // Montar texto do relatório
+                let texto = `*Relatório de Tonalidade*\n\n` +
+                              `*Responsável:* ${responsavel}\n` +
+                              `*Data e Hora:* ${data}\n\n` +
+                              `*Produtos Avaliados:*\n\n`;
+                
+                // Adicionar cada produto
+                products.forEach((product, index) => {
+                    texto += `*Produto ${index + 1}:*\n`;
+                    texto += `Nome: ${product.nome}\n`;
+                    texto += `Formato: ${product.formato}\n`;
+                    texto += `Situação: ${product.situacao}\n`;
+                    
+                    if (product.situacao === 'Número') {
+                        texto += `Justificativa: ${product.justificativa}\n`;
+                    }
+                    
+                    texto += `\n`;
+                });
+                
+                texto += `_Relatório gerado pelo sistema de tonalidade_`;
+                
+                // Codificar para URL
+                const textoCodificado = encodeURIComponent(texto);
+                
+                // Gerar link do WhatsApp
+                const url = `https://wa.me/?text=${textoCodificado}`;
+                
+                // Abrir WhatsApp
+                window.open(url, '_blank');
+            });
+        });
+    </script>
+</body>
+</html>
