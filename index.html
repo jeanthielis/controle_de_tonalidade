@@ -320,17 +320,7 @@
                                 <option value="Letra">Letra</option>
                                 <option value="Número">Número</option>
                             </select>
-                            <label>Tipo de Avaliação</label>
-                        </div>
-                    </div>
-                    
-                    <div class="justificativa-container hidden" id="justificativaContainer">
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <i class="material-icons prefix">feedback</i>
-                                <textarea id="justificativa" class="materialize-textarea validate" data-length="500"></textarea>
-                                <label for="justificativa">Justificativa</label>
-                            </div>
+                            <label>Parecer</label>
                         </div>
                     </div>
                     
@@ -365,8 +355,8 @@
             
             <div class="card hidden" id="reportCard">
                 <div class="card-content">
-                    <span class="card-title">Relatório de Qualidade</span>
-                    <p>Relatório gerado para o controle de qualidade do produto</p>
+                    <span class="card-title">Relatório de Tonalidade</span>
+                    <p>Relatório gerado para o controle de tonalidade do produto</p>
                     
                     <div id="reportPreview">
                         <div class="report-section">
@@ -388,7 +378,7 @@
             </div>
         </div>
     </main>
-    
+
     <div class="fixed-action-btn">
         <a class="btn-floating btn-large grey darken-2">
             <i class="large material-icons">menu</i>
@@ -419,7 +409,6 @@
         $(document).ready(function(){
             // Inicializar componentes do Materialize
             $('select').formSelect();
-            $('#justificativa').characterCounter();
             $('.fixed-action-btn').floatingActionButton({
                 direction: 'top',
                 hoverEnabled: false
@@ -428,47 +417,15 @@
             // Array para armazenar os produtos
             let products = [];
             
-            // Mostrar/ocultar campo de justificativa conforme seleção
-            $('#situacao').change(function(){
-                if ($(this).val() === 'Número') {
-                    $('#justificativaContainer').removeClass('hidden');
-                } else {
-                    $('#justificativaContainer').addClass('hidden');
-                    $('#justificativa').val('');
-                    $('#charCounter').removeClass('invalid');
-                }
-            });
-            
-            // Validar tamanho da justificativa em tempo real
-            $('#justificativa').on('input', function(){
-                const length = $(this).val().length;
-                const counter = $('#charCounter');
-                
-                counter.text(`${length}/10 caracteres`);
-                
-                if (length > 0 && length < 10) {
-                    counter.addClass('invalid');
-                } else {
-                    counter.removeClass('invalid');
-                }
-            });
-            
             // Adicionar produto
             $('#addProductBtn').click(function(){
                 const produto = $('#produto').val().trim();
                 const formato = $('#formato').val().trim();
                 const situacao = $('#situacao').val();
-                const justificativa = $('#justificativa').val().trim();
                 
                 // Validar campos obrigatórios
                 if(!produto || !formato || !situacao) {
                     M.toast({html: 'Por favor, preencha todos os campos do produto!', classes: 'red'});
-                    return;
-                }
-                
-                // Validar justificativa se for avaliação numérica
-                if(situacao === 'Número' && justificativa.length < 10) {
-                    M.toast({html: 'A justificativa deve ter pelo menos 10 caracteres!', classes: 'red'});
                     return;
                 }
                 
@@ -477,7 +434,6 @@
                     nome: produto,
                     formato: formato,
                     situacao: situacao,
-                    justificativa: situacao === 'Número' ? justificativa : ''
                 };
                 
                 products.push(product);
@@ -486,11 +442,9 @@
                 updateProductsList();
                 
                 // Limpar campos do produto
-                $('#produto, #formato, #justificativa').val('');
+                $('#produto, #formato').val('');
                 $('#situacao').val('');
                 $('select').formSelect();
-                $('#justificativaContainer').addClass('hidden');
-                $('#charCounter').removeClass('invalid').text('0/10 caracteres');
                 
                 M.toast({html: 'Produto adicionado com sucesso!', classes: 'green'});
             });
@@ -519,7 +473,6 @@
                             <div><strong>${product.nome}</strong></div>
                             <div>Formato: ${product.formato}</div>
                             <div>Situação: ${product.situacao}</div>
-                            ${product.situacao === 'Número' ? `<div>Justificativa: ${product.justificativa}</div>` : ''}
                         </div>
                     `;
                 });
@@ -572,7 +525,6 @@
                             <div><strong>Produto ${index + 1}:</strong> ${product.nome}</div>
                             <div>Formato: ${product.formato}</div>
                             <div>Situação: ${product.situacao}</div>
-                            ${product.situacao === 'Número' ? `<div>Justificativa: ${product.justificativa}</div>` : ''}
                         </div>
                     `;
                 });
@@ -592,11 +544,9 @@
             // Novo relatório
             $('#newReportBtn').click(function(){
                 // Limpar formulário
-                $('#responsavel, #produto, #formato, #justificativa').val('');
+                $('#responsavel, #produto, #formato').val('');
                 $('#situacao').val('');
                 $('select').formSelect();
-                $('#justificativaContainer').addClass('hidden');
-                $('#charCounter').removeClass('invalid').text('0/10 caracteres');
                 
                 // Limpar produtos
                 products = [];
@@ -643,18 +593,11 @@
                 // Adicionar cada produto
                 products.forEach((product, index) => {
                     texto += `*Produto ${index + 1}:*\n`;
-                    texto += `Nome: ${product.nome}\n`;
-                    texto += `Formato: ${product.formato}\n`;
-                    texto += `Situação: ${product.situacao}\n`;
-                    
-                    if (product.situacao === 'Número') {
-                        texto += `Justificativa: ${product.justificativa}\n`;
-                    }
-                    
-                    texto += `\n`;
+                    texto += `*Nome:* ${product.nome}\n`;
+                    texto += `*Formato:* ${product.formato}\n`;
+                    texto += `*Parecer:* ${product.situacao}\n`;
                 });
                 
-                texto += `_Relatório gerado pelo sistema de tonalidade_`;
                 
                 // Codificar para URL
                 const textoCodificado = encodeURIComponent(texto);
