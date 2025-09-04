@@ -338,7 +338,7 @@
                             <div class="input-field col s12">
                                 <i class="material-icons prefix">feedback</i>
                                 <textarea id="justificativa" class="materialize-textarea validate" data-length="500"></textarea>
-                                <label for="justificativa">Minímo 10 caracteres</label>
+                                <label for="justificativa">Justificativa da Avaliação Numérica (mínimo 10 caracteres)</label>
                                 <div class="char-counter" id="charCounter">0/10 caracteres</div>
                             </div>
                         </div>
@@ -398,19 +398,19 @@
             </div>
         </div>
     </main>
-
+    
     <div class="fixed-action-btn">
         <a class="btn-floating btn-large grey darken-2">
             <i class="large material-icons">menu</i>
         </a>
         <ul>
             <li>
-                <a class="btn-floating green hidden" id="whatsappBtn" title="Enviar por WhatsApp">
+                <a class="btn-floating green disabled" id="whatsappBtn" title="Enviar por WhatsApp">
                     <i class="material-icons">send</i>
                 </a>
             </li>
             <li>
-                <a class="btn-floating blue hidden" id="viewReportBtn" title="Visualizar Relatório">
+                <a class="btn-floating blue disabled" id="viewReportBtn" title="Visualizar Relatório">
                     <i class="material-icons">visibility</i>
                 </a>
             </li>
@@ -421,7 +421,7 @@
             </li>
         </ul>
     </div>
-
+    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     
@@ -434,7 +434,7 @@
                 direction: 'top',
                 hoverEnabled: false
             });
-            
+
             // Array para armazenar os produtos
             let products = [];
             
@@ -589,9 +589,9 @@
                 
                 $('#previewProducts').html(productsHtml);
                 
-                // Mostrar relatório e botões
+                // Mostrar relatório e habilitar botões
                 $('#reportCard').removeClass('hidden');
-                $('#viewReportBtn, #whatsappBtn').removeClass('hidden');
+                $('#viewReportBtn, #whatsappBtn').removeClass('disabled');
                 
                 // Scroll para o relatório
                 $('html, body').animate({
@@ -612,9 +612,9 @@
                 products = [];
                 updateProductsList();
                 
-                // Ocultar relatório
+                // Ocultar relatório e desabilitar botões
                 $('#reportCard').addClass('hidden');
-                $('#viewReportBtn, #whatsappBtn').addClass('hidden');
+                $('#viewReportBtn, #whatsappBtn').addClass('disabled');
                 
                 // Scroll para o topo
                 window.scrollTo(0, 0);
@@ -622,6 +622,11 @@
             
             // Visualizar relatório
             $('#viewReportBtn').click(function(){
+                if ($(this).hasClass('disabled')) {
+                    M.toast({html: 'Gere um relatório primeiro!', classes: 'red'});
+                    return;
+                }
+                
                 if(!$('#reportCard').hasClass('hidden')) {
                     $('html, body').animate({
                         scrollTop: $('#reportCard').offset().top
@@ -631,8 +636,7 @@
             
             // Enviar por WhatsApp
             $('#whatsappBtn').click(function(){
-                // Verificar se o relatório foi gerado
-                if($('#reportCard').hasClass('hidden')) {
+                if ($(this).hasClass('disabled')) {
                     M.toast({html: 'Gere um relatório primeiro!', classes: 'red'});
                     return;
                 }
